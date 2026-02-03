@@ -60,37 +60,6 @@ macro unwrap_if_distinct_type($Type) @const
 	$endif
 }
 
-macro bool has_heap_allocated_inside($Type) @const
-{
-	$if is_heap_allocated($Type):
-		return true;
-	$endif
-
-	$Type = unwrap_if_distinct_or_ptr_type($Type);
-	$if is_heap_allocated($Type):
-		return true;
-	$endif
-
-	$if types::is_indexable($Type):
-		var $EntryType = get_array_inner_type($Type);
-		$if has_heap_allocated_inside($EntryType):
-			return true;
-		$endif
-	$endif
-
-	$if is_kindof($Type, STRUCT):
-		var $mems = $Type.membersof;
-		$for var $i = 0; $i < $mems.len; ++$i:
-			var $MemberType = $typeof($mems[$i]);
-			$if has_heap_allocated_inside($MemberType):
-				return true;
-			$endif
-		$endfor
-	$endif
-
-	return false;
-}
-
 macro bool is_heap_allocated($Type) @const
 {
 	return $defined($Type.allocator) || $defined($Type.capacity);
@@ -99,7 +68,12 @@ macro bool is_heap_allocated($Type) @const
 macro bool is_primitive_type($Type) @const
 {
 	$Type = unwrap_if_distinct_type($Type);
-	return $Type.kindof != STRUCT &&& $Type.kindof != ARRAY &&& $Type.kindof != SLICE &&& $Type.kindof != UNION &&& $Type.kindof != BITSTRUCT;
+	return !is_kindof($Type, STRUCT, UNION, SLICE, ARRAY, BITSTRUCT);
+}
+
+macro bool is_array_like($Type) @const
+{
+	return is_kindof($Type, ARRAY, SLICE);
 }
 
 macro bool is_kindof($Type, TypeKind... $kinds) @const
@@ -110,24 +84,6 @@ macro bool is_kindof($Type, TypeKind... $kinds) @const
 		$endif
 	$endforeach
 	return false;
-}
-
-<*
-	@require types::is_indexable($Type)
-*>
-macro get_array_inner_type($Type) @const
-{
-// Plain arrays
-	$if is_kindof($Type, ARRAY):
-		var $InnerType = $Type.inner;
-		return $InnerType;
-	$endif
-
-// ElasticArray's kindof
-	$if $defined($Type.entries) &&& $typeof($Type.entries) == ARRAY:
-		var $EntryType = $Type.entries.inner;
-		return $EntryType;
-	$endif
 }
 
 macro get_innermost_type($Type) @const
