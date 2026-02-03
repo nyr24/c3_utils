@@ -1,4 +1,22 @@
-module std::io;
+module std::io::file;
+
+enum FileOpenMode
+{
+	BIN,
+	TEXT
+}
+
+fn File open_read(String path, FileOpenMode mode)
+{
+	String opts = mode == BIN ? "r+b" : "r+t";
+	return open(path, opts)!!;
+}
+
+fn File open_write(String path, FileOpenMode mode)
+{
+	String opts = mode == BIN ? "w+b" : "w+t";
+	return open(path, opts)!!;
+}
 
 fn void File.write_all(&file, char[] buff)
 {
@@ -12,7 +30,7 @@ fn void File.write_all(&file, char[] buff)
 <*
 	Caller responsible for freeing return buffer with 'alloc' param
 *>
-fn char[] File.read_all(&file, Allocator alloc)
+fn char[] File.read_all(&file, Allocator alloc, usz* out_read_bytes = null)
 {
 	usz file_len = file.seek(0, END)!!;
 	file.seek(0, SET)!!;
@@ -26,6 +44,9 @@ fn char[] File.read_all(&file, Allocator alloc)
 		read += file.read(buff[read..buff.len-1])!!;
 	}
 
+	if (out_read_bytes) {
+		*out_read_bytes = read;
+	}
 	return buff;
 }
 
