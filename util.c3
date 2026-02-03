@@ -42,6 +42,18 @@ fn String nullterm_str_to_slice(CChar* s) {
 	return (String)s[0:(i-1)];
 }
 
+fn char[] to_byte_slice(Type[] val) <Type>
+{
+	return ((char*)val.ptr)[:val.len * Type.sizeof];
+}
+
+fn Type[] from_byte_slice(char[] val) <Type>
+{
+	return ((Type*)val.ptr)[:val.len / Type.sizeof];
+}
+
+// Metaprogramming
+
 macro unwrap_if_distinct_or_ptr_type($Type) @const
 {
 	$if $Type.kindof == DISTINCT || $Type.kindof == POINTER:
@@ -81,7 +93,7 @@ macro bool has_heap_allocated_inside($Type) @const
 	$if is_kindof($Type, STRUCT):
 		var $mems = $Type.membersof;
 		$for var $i = 0; $i < $mems.len; ++$i:
-			var $MemberType = $typeof($mems[$i]);
+			var $MemberType = $mems[$i].typeid;
 			$if has_heap_allocated_inside($MemberType):
 				return true;
 			$endif
