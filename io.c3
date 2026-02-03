@@ -39,8 +39,7 @@ fn char[] File.read_all(&file, Allocator alloc, usz* out_read_bytes = null)
 	char[] buff = allocator::alloc_array(alloc, char, file_len);
 	defer catch allocator::free(alloc, buff.ptr);
 
-	while (read < buff.len)
-	{
+	while (read < buff.len) {
 		read += file.read(buff[read..buff.len-1])!!;
 	}
 
@@ -50,13 +49,17 @@ fn char[] File.read_all(&file, Allocator alloc, usz* out_read_bytes = null)
 	return buff;
 }
 
-fn void File.read_all_buff(&file, char[] buff)
+fn usz File.read_all_buff(&file, char[] buff)
 {
 	usz read = 0;
-	while (read < buff.len)
-	{
-		read += file.read(buff[read..buff.len-1])!!;
+	while (read < buff.len) {
+		usz curr_read = file.read(buff[read..buff.len-1])!!;
+		if (!curr_read) {
+			return read;
+		}
+		read += curr_read;
 	}
+	return read;
 }
 
 fn usz File.get_len(&file)
