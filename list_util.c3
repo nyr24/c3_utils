@@ -1,5 +1,7 @@
 module std::collections::list <Type>;
 
+import util;
+
 fn Type* List.data(&list)
 {
 	return list.entries;
