@@ -1,5 +1,8 @@
 module util;
 
+import std::time;
+import std::io;
+
 macro void @swap_ptrs(#x, #y) {
 	var temp = *#x;
 	*#x = *#y;
