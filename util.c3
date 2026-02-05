@@ -54,3 +54,13 @@ fn Type[] from_byte_slice(char[] val) <Type>
 {
 	return ((Type*)val.ptr)[:val.len / Type.sizeof];
 }
+
+fn Type[] ptr_to_slice(Type* val) <Type>
+{
+	return val[:1];
+}
+
+fn char[] ptr_to_byte_slice(Type* val) <Type>
+{
+	return to_byte_slice{Type}(val[:1]);
+}
