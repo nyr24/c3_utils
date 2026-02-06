@@ -48,11 +48,27 @@ macro bool is_array_like($Type) @const
 
 macro get_innermost_type($Type) @const
 {
+	var $InnerType = $Type;
 	$if $defined($Type.inner):
 		$InnerType = $Type.inner;
 		return get_innermost_type($InnerType);
 	$endif
-	return $Type;
+	return $InnerType;
+}
+
+macro @get_innermost_type_val(#val) @const
+{
+	var $Type = $typeof(#val);
+	return get_innermost_type($Type);
+}
+
+<*
+	$defined(#val.$field_name)
+*>
+macro @get_field_type_from_val(#val, String $field_name) @const
+{
+	var $FieldType = $typeof(#val.$eval($field_name));
+	return $FieldType;
 }
 
 macro @get_pointee_type_val(#val) @const
