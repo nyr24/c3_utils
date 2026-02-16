@@ -17,6 +17,11 @@ macro bool is_kindof($Type, TypeKind... $kinds) @const
 	return false;
 }
 
+macro bool @is_kindof_val(#val, TypeKind... $kinds) @const
+{
+	return is_kindof($typeof(#val), ...$kinds);
+}
+
 macro unwrap_if_distinct_or_ptr_type($Type) @const
 {
 	$if $Type.kindof == DISTINCT || $Type.kindof == POINTER:
@@ -46,6 +51,11 @@ macro bool is_array_like($Type) @const
 	return is_kindof($Type, ARRAY, SLICE);
 }
 
+macro bool is_ptr_to_ptr($Type) @const
+{
+	return $Type.kindof == POINTER &&& $Type.inner.kindof == POINTER;
+}
+
 macro get_innermost_type($Type) @const
 {
 	var $InnerType = $Type;
@@ -62,9 +72,6 @@ macro @get_innermost_type_val(#val) @const
 	return get_innermost_type($Type);
 }
 
-<*
-	$defined(#val.$field_name)
-*>
 macro @get_field_type_from_val(#val, String $field_name) @const
 {
 	var $FieldType = $typeof(#val.$eval($field_name));
@@ -91,6 +98,16 @@ macro @deref_if_ptr(#val)
 {
 	var $Type = $typeof(#val);
 	$if $Type.kindof == POINTER:
+		return *#val;
+	$else
+		return #val;
+	$endif
+}
+
+macro @deref_if_ptr_to_ptr(#val)
+{
+	var $Type = $typeof(#val);
+	$if is_ptr_to_ptr($Type):
 		return *#val;
 	$else
 		return #val;

@@ -33,3 +33,12 @@ fn void ElasticArray.remove_unordered(&arr, usz ind)
 	util::@swap_ptrs(&arr[ind], &arr[arr.size - 1]);
 	arr.size--;
 }
+
+<*
+	@require arr.size + move_count <= arr.entries.len : "Should not exceed bounds"
+*>
+fn void ElasticArray.move_forward(&arr, usz move_count)
+{
+	arr.size += move_count;
+}
+
