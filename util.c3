@@ -45,26 +45,37 @@ fn String nullterm_str_to_slice(CChar* s) {
 	return (String)s[0:(i-1)];
 }
 
-fn char[] to_byte_slice(Type[] val) <Type>
+<*
+	@require util::is_kindof($typeof(val), POINTER, SLICE) : "Should be Pointer or Slice"
+*>
+macro char[] to_byte_slice(val)
 {
-	$if Type == char:
-		return val;
-	$else
-		return ((char*)val.ptr)[:val.len * Type.sizeof];
-	$endif
+	var $Type = $typeof(val);
+	var $InnerT = $Type.inner;
+
+	$switch ($Type.kindof):
+	$case POINTER:
+		return ((char*)val)[:$InnerT.sizeof];
+	$case SLICE:
+		return ((char*)val.ptr)[:val.len * $InnerT.sizeof];
+	$default:
+		unreachable("Should not go here");
+	$endswitch
 }
 
-fn Type[] from_byte_slice(char[] val) <Type>
+<*
+	@require $OutType.kindof == SLICE : "Expected be slice type as output"
+*>
+macro from_byte_slice(char[] val, $OutType)
 {
-	return ((Type*)val.ptr)[:val.len / Type.sizeof];
+	var $InnerT = $OutType.inner;
+	return (($InnerT*)val.ptr)[:val.len / $InnerT.sizeof];
 }
 
-fn Type[] ptr_to_slice(Type* val) <Type>
+<*
+	@require $typeof(val).kindof == POINTER : "Should be a pointer"
+*>
+macro char[] ptr_to_byte_slice(val)
 {
-	return val[:1];
-}
-
-fn char[] ptr_to_byte_slice(Type* val) <Type>
-{
-	return to_byte_slice(val[:1]);
+	return to_byte_slice(val);
 }

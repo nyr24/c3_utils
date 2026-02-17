@@ -86,12 +86,14 @@ macro @get_pointee_type_val(#val) @const
 
 macro get_pointee_type($Type) @const
 {
-	$if $Type.kindof == POINTER:
+	$switch ($Type.kindof):
+	$case POINTER:
+	$case SLICE:
 		var $Inner = $Type.inner;
 		return $Inner;
-	$else
+	$default:
 		return $Type;
-	$endif
+	$endswitch
 }
 
 macro @deref_if_ptr(#val)
