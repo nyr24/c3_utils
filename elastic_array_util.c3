@@ -35,6 +35,13 @@ fn void ElasticArray.fill(&arr, Type val)
 	}
 }
 
+fn void ElasticArray.fill_through_capacity(&arr, Type val)
+{
+	foreach (&entry : arr.entries) {
+		*entry = val;
+	}
+}
+
 fn void ElasticArray.remove_unordered(&arr, usz ind)
 {
 	assert(ind < arr.size);
@@ -48,5 +55,10 @@ fn void ElasticArray.remove_unordered(&arr, usz ind)
 fn void ElasticArray.move_forward(&arr, usz move_count)
 {
 	arr.size += move_count;
+}
+
+fn void ElasticArray.move_backward(&arr, usz move_count)
+{
+	arr.size -= move_count;
 }
 
