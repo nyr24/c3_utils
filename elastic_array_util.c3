@@ -10,6 +10,14 @@ fn void ElasticArray.resize(&arr, usz new_cap)
 	arr.size = new_cap;
 }
 
+<*
+	@require new_cap <= MAX_SIZE : "Would exceed maximum capacity"
+*>
+fn void ElasticArray.set_size(&arr, usz new_cap)
+{
+	arr.size = new_cap;
+}
+
 fn void ElasticArray.resize_to_cap(&arr)
 {
 	arr.size = MAX_SIZE;
