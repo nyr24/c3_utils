@@ -50,7 +50,7 @@ fn String nullterm_str_to_slice(CChar* s) @builtin
 }
 
 <*
-	@require util::is_kindof($typeof(val), POINTER, SLICE) : "Should be Pointer or Slice"
+	@require is_kindof_val(val, POINTER, SLICE) : "Should be Pointer or Slice"
 *>
 macro char[] to_byte_slice(val) @builtin
 {

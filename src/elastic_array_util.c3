@@ -45,7 +45,7 @@ fn void ElasticArray.fill_through_capacity(&arr, Type val)
 fn void ElasticArray.remove_unordered(&arr, usz ind)
 {
 	assert(ind < arr.size);
-	util::@swap_ptrs(&arr[ind], &arr[arr.size - 1]);
+	swap_ptrs(&arr[ind], &arr[arr.size - 1]);
 	arr.size--;
 }
 
