@@ -31,7 +31,7 @@ fn void List.resize_to_cap(&list)
 fn void List.remove_unordered(&list, usz ind)
 {
 	assert(ind < list.size);
-	util::@swap_ptrs(&list[ind], &list[list.size - 1]);
+	swap_ptrs(&list[ind], &list[list.size - 1]);
 	list.size--;
 }
 

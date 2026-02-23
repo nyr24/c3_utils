@@ -3,13 +3,15 @@ module util;
 import std::time;
 import std::io;
 
-macro void @swap_ptrs(#x, #y) {
+macro void swap_ptrs(#x, #y) @builtin @safemacro
+{
 	var temp = *#x;
 	*#x = *#y;
 	*#y = temp;
 }
 
-macro @perf(String name = "Current Test"; @body) {
+macro perf(String name = "Current Test"; @body) @builtin @safemacro
+{
 	time::Time start = time::now();
 	defer {
 		time::Duration dur = time::now() - start;
@@ -18,7 +20,8 @@ macro @perf(String name = "Current Test"; @body) {
 	@body();
 }
 
-fn bool nullterm_str_eq(CChar* s1, CChar* s2) {
+fn bool nullterm_str_eq(CChar* s1, CChar* s2) @builtin
+{
 	assert(s1 != null && s2 != null);
 
 	CChar* s1_p = s1;
@@ -33,7 +36,8 @@ fn bool nullterm_str_eq(CChar* s1, CChar* s2) {
 	return (*s1_p == '\0') && (*s2_p == '\0');
 }
 
-fn String nullterm_str_to_slice(CChar* s) {
+fn String nullterm_str_to_slice(CChar* s) @builtin
+{
 	assert(s != null);
 
 	usz i = 0;
@@ -48,7 +52,7 @@ fn String nullterm_str_to_slice(CChar* s) {
 <*
 	@require util::is_kindof($typeof(val), POINTER, SLICE) : "Should be Pointer or Slice"
 *>
-macro char[] to_byte_slice(val)
+macro char[] to_byte_slice(val) @builtin
 {
 	var $Type = $typeof(val);
 	var $InnerT = $Type.inner;
@@ -66,16 +70,8 @@ macro char[] to_byte_slice(val)
 <*
 	@require $OutType.kindof == SLICE : "Expected be slice type as output"
 *>
-macro from_byte_slice(char[] val, $OutType)
+macro from_byte_slice(char[] val, $OutType) @builtin
 {
 	var $InnerT = $OutType.inner;
 	return (($InnerT*)val.ptr)[:val.len / $InnerT.sizeof];
-}
-
-<*
-	@require $typeof(val).kindof == POINTER : "Should be a pointer"
-*>
-macro char[] ptr_to_byte_slice(val)
-{
-	return to_byte_slice(val);
 }
