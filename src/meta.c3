@@ -33,13 +33,13 @@ macro inner_type_if_kindof($Type, TypeKind... $kinds) @const @builtin
 
 macro bool is_primitive_type($Type) @const @builtin
 {
-	$Type = inner_type_if_kindof($Type, DISTINCT);
+	$Type = inner_type_if_kindof($Type, TYPEDEF);
 	return !is_kindof($Type, STRUCT, UNION, SLICE, ARRAY, BITSTRUCT);
 }
 
 macro bool is_array_like($Type) @const @builtin
 {
-	$Type = inner_type_if_kindof($Type, DISTINCT);
+	$Type = inner_type_if_kindof($Type, TYPEDEF);
 	return is_kindof($Type, ARRAY, SLICE);
 }
 
@@ -73,7 +73,6 @@ macro pointee_type($Type) @const @builtin
 {
 	$switch ($Type.kindof):
 	$case POINTER:
-	$case SLICE:
 		var $Inner = $Type.inner;
 		return $Inner;
 	$default:
