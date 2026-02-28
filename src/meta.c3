@@ -33,7 +33,7 @@ macro inner_type_if_kindof($Type, TypeKind... $kinds) @const @builtin
 
 macro bool is_primitive_type($Type) @const @builtin
 {
-	$Type = inner_type_if_kindof($Type, TYPEDEF);
+	$Type = inner_type_if_kindof($Type, TYPEDEF, CONSTDEF);
 	return !is_kindof($Type, STRUCT, UNION, SLICE, ARRAY, BITSTRUCT);
 }
 
