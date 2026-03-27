@@ -3,7 +3,7 @@ module std::collections::elastic_array <Type, MAX_SIZE>;
 import util;
 
 <*
-	@require new_cap <= MAX_SIZE : "Would exceed maximum capacity"
+ @require new_cap <= MAX_SIZE : "Would exceed maximum capacity"
 *>
 fn void ElasticArray.resize(&arr, usz new_cap)
 {
@@ -11,7 +11,7 @@ fn void ElasticArray.resize(&arr, usz new_cap)
 }
 
 <*
-	@require new_cap <= MAX_SIZE : "Would exceed maximum capacity"
+ @require new_cap <= MAX_SIZE : "Would exceed maximum capacity"
 *>
 fn void ElasticArray.set_size(&arr, usz new_cap)
 {
@@ -30,35 +30,67 @@ fn Type* ElasticArray.data(&arr)
 
 fn void ElasticArray.fill(&arr, Type val)
 {
-	foreach (&entry : arr.array_view()) {
+	foreach (&entry : arr.array_view())
+	{
 		*entry = val;
 	}
 }
 
 fn void ElasticArray.fill_through_capacity(&arr, Type val)
 {
-	foreach (&entry : arr.entries) {
+	foreach (&entry : arr.entries)
+	{
 		*entry = val;
 	}
 }
 
+<*
+ @require ind < arr.size : "Should not exceed bounds"
+*>
 fn void ElasticArray.remove_unordered(&arr, usz ind)
 {
-	assert(ind < arr.size);
 	swap_ptrs(&arr[ind], &arr[arr.size - 1]);
 	arr.size--;
 }
 
 <*
-	@require arr.size + move_count <= arr.entries.len : "Should not exceed bounds"
+ @require arr.size + move_count <= arr.entries.len : "Should not exceed bounds"
 *>
 fn void ElasticArray.move_forward(&arr, usz move_count)
 {
 	arr.size += move_count;
 }
 
+<*
+ @require (isz)arr.size - move_count >= 0 : "Should not exceed bounds"
+*>
 fn void ElasticArray.move_backward(&arr, usz move_count)
 {
 	arr.size -= move_count;
 }
 
+fn Type[] ElasticArray.view(&arr) => arr.array_view();
+
+<*
+ @require end < arr.size : "Should not be more than or equal to size"
+*>
+fn Type[] ElasticArray.view_range(&arr, usz start, usz end)
+{
+	return arr.entries[start..end];
+}
+
+<*
+ @require (start + len) <= arr.size : "Should not be more than or equal to size"
+*>
+fn Type[] ElasticArray.view_range_len(&arr, usz start, usz len)
+{
+	return arr.entries[start:len];
+}
+
+<*
+ @require (start + len) <= MAX_SIZE : "Should not be more than or equal to capacity"
+*>
+fn Type[] ElasticArray.view_range_len_through_cap(&arr, usz start, usz len)
+{
+	return arr.entries[start:len];
+}

@@ -1,23 +1,39 @@
 module std::core::dstring;
 
+fn String DString.view(&dstring) => dstring.str_view();
+
 <*
-	@require end < dstring.len() : "Should not be more than or equal to length"
+ @require end < dstring.len() : "Should not be more than or equal to length"
 *>
-fn char[] DString.view_range(&dstring, usz start, usz end)
+fn String DString.view_range(&dstring, usz start, usz end)
 {
-	return dstring.str_view()[start..end];
+	StringData* data = dstring.data();
+	if (!data) return "";
+	return (String)data.chars[start..end];
 }
 
 <*
-	@require (start + len) <= dstring.len() : "Should not be more than or equal to length"
+ @require (start + len) <= dstring.len() : "Should not be more than or equal to length"
 *>
-fn char[] DString.view_range_len(&dstring, usz start, usz len)
+fn String DString.view_range_len(&dstring, usz start, usz len)
 {
-	return dstring.str_view()[start:len];
+	StringData* data = dstring.data();
+	if (!data) return "";
+	return (String)data.chars[start:len];
 }
 
 <*
-	@require new_len <= dstring.capacity() : "New len should be less or equal to capacity"
+ @require (start + len) <= dstring.capacity() : "Should not be more than or equal to capacity"
+*>
+fn String DString.view_range_len_through_cap(&dstring, usz start, usz len)
+{
+	StringData* data = dstring.data();
+	if (!data) return "";
+	return (String)data.chars[start:len];
+}
+
+<*
+ @require new_len <= dstring.capacity() : "New len should be less or equal to capacity"
 *>
 fn void DString.resize(&dstring, usz new_len)
 {
