@@ -36,8 +36,8 @@ fn char[] File.read_all(&file, Allocator alloc, usz* out_read_bytes = null)
 	file.seek(0, SET)!!;
 	usz read = 0;
 
-	char[] buff = allocator::alloc_array(alloc, char, file_len);
-	defer catch allocator::free(alloc, buff.ptr);
+	char[] buff = alloc::alloc_array(alloc, char, file_len);
+	defer catch alloc::free(alloc, buff.ptr);
 
 	while (read < buff.len) {
 		read += file.read(buff[read..buff.len-1])!!;
