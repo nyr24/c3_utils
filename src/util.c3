@@ -40,7 +40,7 @@ fn String nullterm_str_to_slice(CChar* s) @builtin
 {
 	assert(s != null);
 
-	usz i = 0;
+	sz i = 0;
 
 	while (s[i] != '\0') {
 		++i;

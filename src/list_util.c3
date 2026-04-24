@@ -18,7 +18,7 @@ fn void List.fill(&list, Type val)
 <*
  @require new_cap <= list.capacity : "Should not exceed current capacity"
 *>
-fn void List.resize(&list, usz new_cap)
+fn void List.resize(&list, sz new_cap)
 {
 	list.size = new_cap;
 }
@@ -29,7 +29,7 @@ fn void List.resize_to_cap(&list)
 }
 
 
-fn void List.remove_unordered(&list, usz ind)
+fn void List.remove_unordered(&list, sz ind)
 {
 	assert (ind < list.size);
 	swap_ptrs(&list[ind], &list[list.size - 1]);
@@ -39,7 +39,7 @@ fn void List.remove_unordered(&list, usz ind)
 <*
  @require list.size + move_count <= list.capacity : "Should not exceed bounds"
 *>
-fn void List.move_forward(&list, usz move_count)
+fn void List.move_forward(&list, sz move_count)
 {
 	list.size += move_count;
 }
@@ -49,7 +49,7 @@ fn Type[] List.view(&list) => list.array_view();
 <*
  @require end < list.size : "Should not be more than or equal to size"
 *>
-fn Type[] List.view_range(&list, usz start, usz end)
+fn Type[] List.view_range(&list, sz start, sz end)
 {
 	return list.entries[start..end];
 }
@@ -57,7 +57,7 @@ fn Type[] List.view_range(&list, usz start, usz end)
 <*
  @require (start + len) <= list.size : "Should not be more than or equal to size"
 *>
-fn Type[] List.view_range_len(&list, usz start, usz len)
+fn Type[] List.view_range_len(&list, sz start, sz len)
 {
 	return list.entries[start:len];
 }
@@ -65,7 +65,7 @@ fn Type[] List.view_range_len(&list, usz start, usz len)
 <*
  @require (start + len) <= list.capacity : "Should not be more than or equal to capacity"
 *>
-fn Type[] List.view_range_len_through_cap(&list, usz start, usz len)
+fn Type[] List.view_range_len_through_cap(&list, sz start, sz len)
 {
 	return list.entries[start:len];
 }

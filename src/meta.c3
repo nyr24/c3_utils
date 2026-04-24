@@ -10,7 +10,7 @@ macro bool is_heap_allocated($Type) @const @builtin
 macro bool is_kindof($Type, TypeKind... $kinds) @const @builtin
 {
 	$foreach $k : $kinds:
-		$if $Type.kindof == $k:
+		$if $Type::kind == $k:
 			return true;
 		$endif
 	$endforeach
@@ -25,7 +25,7 @@ macro bool is_kindof_val(#val, TypeKind... $kinds) @const @builtin @safemacro
 macro inner_type_if_kindof($Type, TypeKind... $kinds) @const @builtin
 {
 	$if is_kindof($Type):
-		return $Type.inner;
+		return $Type::inner;
 	$else
 		return $Type;
 	$endif
@@ -51,14 +51,14 @@ macro bool is_array_like_val(#val) @const @builtin @safemacro
 macro bool is_ptr_to_ptr(#val) @const @builtin @safemacro
 {
 	var $Type = $typeof(#val);
-	return $Type.kindof == POINTER &&& $Type.inner.kindof == POINTER;
+	return $Type::kind == POINTER &&& $Type::inner.kind == POINTER;
 }
 
 macro innermost_type($Type) @const @builtin
 {
 	var $InnerType = $Type;
-	$if $defined($Type.inner):
-		$InnerType = $Type.inner;
+	$if $defined($Type::inner):
+		$InnerType = $Type::inner;
 		return innermost_type($InnerType);
 	$endif
 	return $InnerType;
@@ -71,9 +71,9 @@ macro innermost_type_val(#val) @const @builtin @safemacro
 
 macro pointee_type($Type) @const @builtin
 {
-	$switch ($Type.kindof):
+	$switch ($Type::kind):
 	$case POINTER:
-		var $Inner = $Type.inner;
+		var $Inner = $Type::inner;
 		return $Inner;
 	$default:
 		return $Type;
@@ -89,7 +89,7 @@ macro pointee_type_val(#val) @const @builtin @safemacro
 macro deref_if_ptr(#val) @builtin @safemacro
 {
 	var $Type = $typeof(#val);
-	$if $Type.kindof == POINTER:
+	$if $Type::kind == POINTER:
 		return *#val;
 	$else
 		return #val;
