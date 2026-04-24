@@ -55,23 +55,23 @@ fn String nullterm_str_to_slice(CChar* s) @builtin
 macro char[] to_byte_slice(val) @builtin
 {
 	var $Type = $typeof(val);
-	var $InnerT = $Type.inner;
+	var $InnerT = $Type::inner;
 
-	$switch ($Type.kindof):
+	$switch ($Type::kind):
 	$case POINTER:
-		return ((char*)val)[:$InnerT.sizeof];
+		return ((char*)val)[:$InnerT::size];
 	$case SLICE:
-		return ((char*)val.ptr)[:val.len * $InnerT.sizeof];
+		return ((char*)val.ptr)[:val.len * $InnerT::size];
 	$default:
 		unreachable("Should not go here");
 	$endswitch
 }
 
 <*
-	@require $OutType.kindof == SLICE : "Expected be slice type as output"
+	@require $OutType::kind == SLICE : "Expected be slice type as output"
 *>
 macro from_byte_slice(char[] val, $OutType) @builtin
 {
-	var $InnerT = $OutType.inner;
-	return (($InnerT*)val.ptr)[:val.len / $InnerT.sizeof];
+	var $InnerT = $OutType::inner;
+	return (($InnerT*)val.ptr)[:val.len / $InnerT::size];
 }
